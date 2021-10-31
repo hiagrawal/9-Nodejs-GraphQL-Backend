@@ -1,8 +1,11 @@
-- install express-validator for validation: npm install --save express-validator
-- install mongoose for database: npm install --save mongoose
-- install multer for parsing image : npm install --save multer
-- install uuid to generate a unique id for date fix with images: npm install --save uuid
-- install bcryptjs which allows us to hash a password in a secure way : npm install --save bcryptjs
-- install jsonwebtoken for creating json web tokens used for authentication: npm install --save jsonwebtoken   
+ - install graphql and express-graphql for defining graphql schema and handling graphql requests in express server:
+   npm install --save graphql express-graphql
 
 
+----------------------------------------------------------------------------------------------------
+
+- Since in Graphql, we do not need routes. Instaed of Routes, we have query, mutations and subscriptions hence we can remove all
+  code related to routes
+- we need to install graphql and express-graphql
+- graphql is required to define the schema of graphql services
+- express-graphql will be required for parsing the incoming requests and hadling graphql in express server
