@@ -1,0 +1,103 @@
+- Create a new folder
+- add gitignore to ignore nodemodules
+- run npm init for package.josn file
+- install express : npm install --save express
+- install nodemon for runtime watch as only dev dependency: npm install --save-dev nodemon
+- add 'start' script in package.json file
+- add app.js file
+- install body parser : npm install --save body-parser
+
+--------------------------------------------------------------------------------------------------------
+
+status 200 is just success, status 201 indicates that we created/added something which is more significant
+
+bosyParser.urlencoded() is used when type is 'x-www-form-urlencoded' which is when submit through form post request
+
+--------------------------------------------------------------------------------------------------------------------
+
+to test a REST API: Use Postman
+we can use Postman. This is a very popular tool and can be downloaded from : https://www.postman.com/downloads/
+can use web version also directly without downloading: https://web.postman.co/
+
+In Postman: go to workspace - my workspace - collections - and then '+' icon beside overview on the right side
+now select the method: get/post.. - enter url (http://localhost:8080/feed/post) 
+below that in the 'body' option, select 'raw' radio button and then JSOn from the dropdown at the end 
+and in the body, then enter the json data to be passed to the server: 
+like this {"title" : "Second Post", "content": "This is the second post."} 
+and hit 'send' to see the response below
+
+Response will be something like:
+{
+    "message": "Post created successfully!",
+    "post": {
+        "id": "2021-10-27T10:29:55.370Z",
+        "title": "Second Post",
+        "content": "This is the second post."
+    }
+}
+
+Can also check the 'headers' section in response to see what all paramters are getting set
+
+------------------------------------------------------------------------------------------------------------------
+
+CORS
+
+If we write our frontend code in codepen, and try to access the url, we get cors error since both are at different domain
+for this, we need to allow cors at server side
+
+CodePen Code:
+HTML:
+<button id="get">Get Posts</button>
+<button id="post">Create a Post</button>
+
+JS:
+const getButton = document.getElementById('get');
+const postButton = document.getElementById('post');
+
+getButton.addEventListener('click', () => {
+  fetch('http://localhost:8080/feed/posts')
+  .then(res => res.json())
+  .then(resData => console.log(resData))
+  .catch(err => console.log(err));
+});
+
+postButton.addEventListener('click', () => {
+  fetch('http://localhost:8080/feed/post', {
+    method: 'POST',
+    body: JSON.stringify({
+      title: 'A CodePen Post',
+      content: 'Created via CodePen'
+    }),
+    headers: {
+      'Content-type': 'application/json'
+    }
+  })
+  .then(res => res.json())
+  .then(resData => console.log(resData))
+  .catch(err => console.log(err));
+})
+
+We get the response in console:
+posts: Array(1)
+0:
+content: "This is the first post."
+title: "First Post"
+
+while sending post request to server and sending data:
+data should be JSON as our server can accept and parse JSON data only. 
+Remember we can parse plain text as well but that is unnecessarily difficult as it does not has any clear data structure
+
+For sending JSON data: we can use JSON.stringify provided by JS which converts javascript object to JSON
+Also we will need to set the header to 'application/json' else it will be 'plain/text' by default (and we can see that in network tab in Request Headers) 
+and server will not be able to read/understand/parse the same
+
+While sending Request: When we see in network tab, we see 2 request is being sent for POST
+One is POST and one is Options. Options is automatically sent by the browser 
+Browser uses this to check whatever request we have made lets say POST etc if that is allowed or not (that we allowed using Allow-Origin)
+So this is a mechanism used by browser to validate the request
+
+------------------------------------------------------------------------------------------------------------------------
+
+Useful resources:
+
+Example: Build a Complete RESTful API from Scratch: https://academind.com/learn/node-js/building-a-restful-api-with/

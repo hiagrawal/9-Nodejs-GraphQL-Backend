@@ -1,0 +1,80 @@
+Authorization is done using jsonwebtoken
+
+  //sign method is used to generate the json token signature. It takes first argument as some data so that it uses the data 
+  //to generate the token so if data changes, token also changes so it becomes more secure
+  //make a note that this data is exposed to the client and stored in client's browser so some sensitive information should not be passed there
+  //we can check the same in debugger tools 'Application' tab -> Storage -> Local Storage
+  //second paramter is secret key which is used to validate the token (can check at https://jwt.io/)
+  //we can paste the token at https://jwt.io/ and check the payload data there. so anyone can see that data 
+  //We can double check by enter the secret key and data and get that token on the left
+  //If we change data or secret key there, token also gets changed
+  //Third is optional paramter wherein we can give expiresIn property so even if this token gets compromised, it will be 
+  //valid only for an hour and hence adds more security
+
+    const token = jwt.sign({
+        email: loadedUser.email,
+        userId: loadedUser._id.toString()
+    }, 'somesupersupersecretkey', {expiresIn: '1h'} )
+
+    res.status(200).json({token: token, userId: loadedUser._id.toString()})
+
+    Now to pass it in every request from the frontend, we have 3 options:
+    1. We can pass the same in url as a query paramter but obviously it will make query paramter relly long and ugly
+    2. we can pass in body but that will not be possible in 'get' requests since get request does not have a body
+    3. so best is, we pass it in header. In Header we can pass in any paramter, 'Authorization' is the usual key we use 
+    to pass any authorization related data
+    There for the value we pass 'Bearer ' + Token (Bearer whitespace token) so to fetch the same, we can split on whitespace
+    Now this bearer is simply a convention to add which indicates that it is a json web token 
+    Although it is completely optional to add
+
+    fetch('http://localhost:8080/feed/posts?page=' + page, {
+      headers: {
+        Authorization: 'Bearer ' + this.props.token
+      }
+    })
+
+    And remember, we have added Authorization to be allowed in CORS else this would give CORS error
+
+    //this is required so that request from other domain can access our server, methods and they dont get CORS error
+    app.use((req,res,next) => {
+      res.setHeader('Access-Control-Allow-Origin', '*'); //allow access from all domains //can mention specific domain also
+      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE'); //can specify all or whatever methods we want request from other domain to access
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization'); 
+      //this is headers client side code (frontend) might set on their requests like we set for 'application/json'. 
+      //If this allow headers for content type was not added here, our request would have failed and would CORS error
+      next();
+})
+
+and then to validate the same at backend, will get the token value 
+header values are fetched uisng get() method on request
+
+const jwt = require('jsonwebtoken');
+
+module.exports = (req, res, next) => {
+    const authHeader = req.get('Authorization');
+    if(!authHeader){
+        const error = new Error('Not authenticated.');
+        error.statusCode = 401;
+        throw error;
+    }
+    const token = authHeader.split(' ')[1];
+    let decodedToken;
+    try{
+        decodedToken = jwt.verify(token, 'somesupersupersecretkey'); 
+        //verify will decode the token as well as verify the same and if verified, returns the decoded data that we had sent (email and userId)
+        //we also have a token.decode() method also but that only decodes the token and not verify
+    }
+    catch(err){
+        err.statusCode = 500;
+        throw err;
+    }
+    //checking if decodedToken is not undefined, which would be the case if it didnt fail technically but was also not able to verify the token
+    //if it verified then decodedToken will have the token data
+    if(!decodedToken){ 
+        const error = new Error('Not authenticated.');
+        error.statusCode = 401;
+        throw error;
+    }
+    req.userId = decodedToken.userId;
+    next();
+}
