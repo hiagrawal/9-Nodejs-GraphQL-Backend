@@ -5,6 +5,10 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
+const {graphqlHTTP} = require('express-graphql');
+
+const graphqlSchema = require('./graphql/schema');
+const graphqlResolver = require('./graphql/resolvers');
 
 const app = express();
 
@@ -40,7 +44,12 @@ app.use((req,res,next) => {
     //this is headers client side code (frontend) might set on their requests like we set for 'application/json'. 
     //If this allow headers for content type was not added here, our request would have failed and would CORS error
     next();
-})
+});
+
+app.use('/graphql', graphqlHTTP({
+    schema: graphqlSchema,
+    rootValue: graphqlResolver
+}));
 
 app.use((error, req, res, next) => {
     console.log(error);
@@ -52,6 +61,7 @@ app.use((error, req, res, next) => {
 
 mongoose.connect('mongodb+srv://MongoDbUser:MongoDbUser@cluster0.kij6e.mongodb.net/RESTAPI?retryWrites=true&w=majority')
 .then(result => {
+    console.log('connected!');
     app.listen(8080);
 })
 .catch(err => {

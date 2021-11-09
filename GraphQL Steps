@@ -1,0 +1,118 @@
+ 
+ - install graphql and express-graphql for defining graphql schema and handling graphql requests in express server:
+   npm install --save graphql express-graphql
+
+
+----------------------------------------------------------------------------------------------------
+
+- Since in Graphql, we do not need routes. Instaed of Routes, we have query, mutations and subscriptions hence we can remove all
+  code related to routes
+- we need to install graphql and express-graphql
+- graphql is required to define the schema of graphql services
+- express-graphql will be required for parsing the incoming requests and hadling graphql in express server
+
+-------------------------------------------------------------------------------------------------------------------------
+
+Useful Link: https://graphql.org/ ,  https://graphql.org/code/#javascript
+
+-----------------------------------------------------------------------------------------------------------------------
+
+Implementation:
+
+In Rest api, we have 'routes' and 'controllers'. 
+Routes is used to define what request, which type of request, what data it needs to return
+and controllers are used to define logic to return the requested data
+
+now in graphql, we have 'schema' and 'resolvers'
+Schema is used to define what request, which type of request, what data it needs to return
+and resolvers are used to define logic to return the requested data
+
+- Frontend always requests to the '/graphql' url only to query any data which will always be a 'POST' request.
+POST request since it needs to send data what query it is lookig for and what data it needs
+
+------------------------------------------------------------------------------------------------------------------
+
+schema:
+
+const { buildSchema } = require('graphql');
+
+module.exports = buildSchema(`
+  type TestData {
+    text: String!
+    views: Int!
+  }
+
+  type RootQuery {
+    hello: TestData!
+  }
+
+  schema {
+    query: RootQuery
+  }
+
+`);
+
+resolvers:
+
+module.exports = {
+  hello() {
+    return {
+        text: 'Hello World',
+        views: 12345
+    }
+}
+}
+
+app.js 
+
+const {graphqlHTTP} = require('express-graphql');
+
+const graphqlSchema = require('./graphql/schema');
+const graphqlResolver = require('./graphql/resolvers');
+
+app.use('/graphql', graphqlHTTP({
+  schema: graphqlSchema,
+  rootValue: graphqlResolver
+}));
+
+-------------------------------------------------------------------------------------------------------------
+
+Now start the server and to test use POSTMAN: (USe desktop version when running on localhost, web version might not work)
+
+type the url: http://localhost:8080/graphql, method 'POST' and in the body, raw, type json, define the query and what data it needs
+
+{
+  "query" : "{hello {text}}"
+}
+
+and can see the output
+
+{
+  "data": {
+      "hello": {
+          "text": "Hello World"
+      }
+  }
+}
+
+if want both then....
+
+{
+  "query" : "{hello {text views}}"
+}
+
+{
+  "data": {
+      "hello": {
+          "text": "Hello World",
+          "views": 12345
+      }
+  }
+}
+
+this way we can simply get the data what we want (text, views or both) from the same query and graphql express does the 
+heavy lifting and returns the filtered out data
+
+---------------------------------------------------------------------------------------------------------------------------
+
+
