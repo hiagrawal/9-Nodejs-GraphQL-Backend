@@ -206,3 +206,27 @@ This will catch all the error being thrown and then we can format the same
     ],
     "data": null
   }
+
+--------------------------------------------------------------------------------------------
+
+Accessing from Frontend:
+
+const graphqlQuery = {
+  query:`
+    mutation{
+      createUser(userInput: {email: "${authData.signupForm.email.value}", name: "${authData.signupForm.name.value}", password: "${authData.signupForm.password.value}"}) {
+        _id
+        email
+      }
+    }
+  `
+}
+fetch('http://localhost:8080/graphql', {
+  method: 'POST',
+  body: JSON.stringify(graphqlQuery),
+  headers: {
+    'Content-Type': 'application/json'
+  }
+})
+
+------------------------------------------------------------------------------------------------------------

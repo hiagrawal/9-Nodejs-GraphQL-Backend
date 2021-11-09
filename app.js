@@ -43,6 +43,9 @@ app.use((req,res,next) => {
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization'); 
     //this is headers client side code (frontend) might set on their requests like we set for 'application/json'. 
     //If this allow headers for content type was not added here, our request would have failed and would CORS error
+    if(req.method === 'OPTIONS'){
+        return res.sendStatus(200);
+    }
     next();
 });
 
