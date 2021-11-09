@@ -230,3 +230,12 @@ fetch('http://localhost:8080/graphql', {
 })
 
 ------------------------------------------------------------------------------------------------------------
+
+Chceking createPost:
+
+mutation {
+  createPost(postInput: {title: "tests", content: "tests", imageUrl: "some url"}){
+    _id
+    title
+  }
+}
