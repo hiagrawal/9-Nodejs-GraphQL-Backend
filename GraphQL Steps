@@ -115,4 +115,10 @@ heavy lifting and returns the filtered out data
 
 ---------------------------------------------------------------------------------------------------------------------------
 
+'query' is used to 'get' data, 'mutation' is used to 'post' data
+so we used query to return the text and view filtered
+
+now we want to create user from the frontend, send this data to backend which then save it in db and return the saved data
+for this, we will use mutation which accepts input data
+
 

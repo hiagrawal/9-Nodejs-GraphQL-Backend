@@ -1,8 +1,8 @@
 module.exports = {
 
-    // hello() {
-    //     return 'Hello World'
-    // }
+    helloSample() {
+        return 'Hello World'
+    },
 
     hello() {
         return {
