@@ -9,6 +9,7 @@ const {graphqlHTTP} = require('express-graphql');
 
 const graphqlSchema = require('./graphql/schema');
 const graphqlResolver = require('./graphql/resolvers');
+const auth = require('./middleware/auth');
 
 const app = express();
 
@@ -48,6 +49,11 @@ app.use((req,res,next) => {
     }
     next();
 });
+
+//so whatever we used to do in routes earlier, we do it here
+//every requests that comes through will pass through this auth middleware but it will not deny the request like in rest apis
+//but it will return isAuth true false indicating if user is authenticated or not which we then will handle in resolvers
+app.use(auth);
 
 app.use('/graphql', graphqlHTTP({
     schema: graphqlSchema,
