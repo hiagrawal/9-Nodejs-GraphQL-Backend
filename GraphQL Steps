@@ -121,4 +121,34 @@ so we used query to return the text and view filtered
 now we want to create user from the frontend, send this data to backend which then save it in db and return the saved data
 for this, we will use mutation which accepts input data
 
+--------------------------------------------------------------------------------------------------------------------------------
 
+to test graphql requests, we can use tool provided by graphql which can be accessed by setting 'graphiql' to true
+
+app.use('/graphql', graphqlHTTP({
+  schema: graphqlSchema,
+  rootValue: graphqlResolver,
+  graphiql: true
+}));
+//and hence used 'app.use' here so can access all get(query) and post(mutation) requests
+
+after setting this, run the server and hit 'http://localhost:8080/graphql' 
+this will provide us a playground to run querys, also can see all querys, mutations under Docs section at the right side
+
+mutation{
+  createUser(userInput: {email: "test@test.com", name: "Hina", password: "tester"}) {
+    _id
+    email
+  }
+}
+
+and then hit play button to see the results
+
+  {
+    "data": {
+      "createUser": {
+        "_id": "618a3556aa3eae31cc02f307",
+        "email": "test@test.com"
+      }
+    }
+  }

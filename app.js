@@ -48,7 +48,8 @@ app.use((req,res,next) => {
 
 app.use('/graphql', graphqlHTTP({
     schema: graphqlSchema,
-    rootValue: graphqlResolver
+    rootValue: graphqlResolver,
+    graphiql: true
 }));
 
 app.use((error, req, res, next) => {
@@ -59,7 +60,7 @@ app.use((error, req, res, next) => {
     res.status(status).json({message: message, data: data});
 })
 
-mongoose.connect('mongodb+srv://MongoDbUser:MongoDbUser@cluster0.kij6e.mongodb.net/RESTAPI?retryWrites=true&w=majority')
+mongoose.connect('mongodb+srv://MongoDbUser:MongoDbUser@cluster0.kij6e.mongodb.net/GraphQL?retryWrites=true&w=majority')
 .then(result => {
     console.log('connected!');
     app.listen(8080);
