@@ -152,3 +152,16 @@ and then hit play button to see the results
       }
     }
   }
+
+-------------------------------------------------------------------------------------------------------------
+
+Input validation
+Eralier, we used to add validation logic as a middleware in routes but here since we dont have any such routes, 
+we will add validation in resolvers.
+
+for that, we need to install a package: 
+tHis is a pkg that 'express-validator' pkg uses behind the scenes so now we are uisng it directly here
+npm install --save validator
+
+can apply validations which are almost same as we had in express validator and then can check in graphiql playground
+by entering incorrect email without @ or entering short password
