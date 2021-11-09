@@ -165,3 +165,44 @@ npm install --save validator
 
 can apply validations which are almost same as we had in express validator and then can check in graphiql playground
 by entering incorrect email without @ or entering short password
+
+we get the result like this:
+{
+  "errors": [
+    {
+      "message": "Invalid Input",
+      "locations": [
+        {
+          "line": 33,
+          "column": 3
+        }
+      ],
+      "path": [
+        "createUser"
+      ]
+    }
+  ],
+  "data": null
+}
+
+------------------------------------------------------------------------------------------------------------------
+
+formatting error
+
+We can use formatError to format the error and send the data any way we want
+This will catch all the error being thrown and then we can format the same
+
+  {
+    "errors": [
+      {
+        "message": "Invalid Input",
+        "status": 422,
+        "data": [
+          {
+            "message": "Email is invalid"
+          }
+        ]
+      }
+    ],
+    "data": null
+  }
