@@ -245,6 +245,55 @@ mutation {
 Uploading Images:
 
 GraphQL only works with JSON data. For images, cam use third party pkgs or other things but cleanest way is:
-send image to a rest api like endpoint which will return path to the image and then end this image path with other data paramters
-to graphql request
+send image to a rest api like endpoint which will store image and return path of the image and then add this image path with other data paramters
+to graphql request to store it in db
+
+    const formData = new FormData();
+    formData.append('image', postData.image);
+  
+    fetch('http://localhost:8080/post-image',{
+      method: 'PUT',
+      body: formData,
+      headers: {
+        Authorization: 'Bearer ' + this.props.token
+      }
+    })
+    .then(res => res.json())
+    .then(fileResData => {
+      const imageUrl = fileResData.filePath;
+
+      //making graphql query post getting the image path
+      const graphqlQuery = {
+        query: `
+          mutation {
+            createPost(postInput: {title: "${postData.title}", content: "${postData.content}", imageUrl: "${imageUrl}"}){
+              _id
+              title
+              content
+              creator {
+                name
+              }
+              createdAt
+            }
+          }
+        `
+      }
+    
+      return fetch('http://localhost:8080/graphql', {
+        method: 'POST',
+        body: JSON.stringify(graphqlQuery),
+        headers: {
+          Authorization: 'Bearer ' + this.props.token,
+          'Content-Type' : 'application/json'
+        }
+      })
+    })
+      .then(res => {
+        return res.json();
+      })
+      .then(resData => {
+      ....
+
+-------------------------------------------------------------------------------------------------------------------
+           
 
