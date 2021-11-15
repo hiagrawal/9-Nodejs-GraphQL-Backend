@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -55,6 +56,20 @@ app.use((req,res,next) => {
 //but it will return isAuth true false indicating if user is authenticated or not which we then will handle in resolvers
 app.use(auth);
 
+//if getting post-image url then saving the imge, sending the image path and deleting the old image
+app.put('/post-image', (req, res, next) => {
+    if(!req.isAuth){
+        throw new Error('Not authenticated!');
+    }
+    if(!req.file){
+        return res.status(200).json({message: 'File Not Found!'});
+    }
+    if(req.body.oldPath){
+        clearImage(req.body.oldPath);
+    }
+    return res.status(201).json({message: 'File Stored', filePath: req.file.path.replace("\\","/")});
+})
+
 app.use('/graphql', graphqlHTTP({
     schema: graphqlSchema,
     rootValue: graphqlResolver,
@@ -86,4 +101,11 @@ mongoose.connect('mongodb+srv://MongoDbUser:MongoDbUser@cluster0.kij6e.mongodb.n
 .catch(err => {
     console.log(err);
 })
+
+const clearImage = (filePath) => {
+    filePath = path.join(__dirname, '..', filePath)
+    fs.unlink(filePath, err => {
+        console.log(err);
+    });
+}
 

@@ -239,3 +239,12 @@ mutation {
     title
   }
 }
+
+-------------------------------------------------------------------------------------------------------------------
+
+Uploading Images:
+
+GraphQL only works with JSON data. For images, cam use third party pkgs or other things but cleanest way is:
+send image to a rest api like endpoint which will return path to the image and then end this image path with other data paramters
+to graphql request
+
