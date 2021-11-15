@@ -98,6 +98,7 @@ module.exports = buildSchema(`
     type RootMutation {
         createUser(userInput: UserInputData) : User!
         createPost(postInput: postInputData): Post!
+        updatePost(id: ID!, postInput: postInputData): Post!
     }
 
     schema {
