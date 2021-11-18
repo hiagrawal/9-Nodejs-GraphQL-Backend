@@ -296,4 +296,44 @@ to graphql request to store it in db
 
 -------------------------------------------------------------------------------------------------------------------
            
+Using variables:
+
+When we pass values from frontend to graphql, we were using interpolation SyntaxError. we can surely use that but better way
+that graphql has provided us is using 'variables'
+
+so..
+
+Instead of passing like this:
+
+const graphqlQuery = {
+  query: `
+  {
+    posts(page: ${frontendVariablePage}) {
+      posts {_id title content imageUrl creator {name} createdAt}
+      totalPosts
+    }
+  }
+  `
+}
+
+should pass like this using variables:
+
+const graphqlQuery = {
+  query: `
+  query FetchPosts($currentPage: Int){
+    posts(page: $currentPage) {
+      posts {_id title content imageUrl creator {name} createdAt}
+      totalPosts
+    }
+  }
+  `,
+  variables: {
+    currentPage: frontendVariablePage
+  }
+}
+
+//for query, write 'query' keyword, then give name to that query and then pass paramters and define it's type
+//and then pass those paramters and it's value in variables object
+
+//variables type and required or not should match the same with what we are defining in schema
 
